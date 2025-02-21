@@ -1,0 +1,405 @@
+﻿<html>
+<head>
+    <title>Пьяница</title>
+    <style>
+        #container {
+            width: 100vw;
+            height: 100vh;
+            padding: 0;
+            background: #1C470E;
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            flex-direction: column;
+        }
+        table {
+            width: 80vw;
+            height: 3vh;
+            margin: auto;
+            margin-top: 5vh;
+            background: #FFEEE3;
+            border-radius: 2vw;
+            border: 0.2vw solid #000000;
+            color: #593828;
+        }
+        #table {
+            width: 100vw;
+        }
+        .textstats {
+            text-align: right;
+        }
+        .playingcard {
+            background: #1C470E;
+            width: 15vw;
+            height: 35vh;
+            display: flex;
+            border-radius: 1vw;
+            justify-content: center;
+            font-size: 6vw;
+            color: #1C470E;
+        }
+        .deck {
+            background: #D4B07E;
+            width: 15vw;
+            height: 35vh;
+            display: flex;
+            border-radius: 1vw;
+            border: 0.2vw solid #000000;            
+            color: #593828;
+        }
+        .column {
+            margin: auto;
+            margin-top: 5vh;
+            width: 90vw;
+            height: 45vh;
+            flex-direction: row;
+            background: #1C470E;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        form {
+            margin: auto;
+            margin-top: 5vh;
+            display: flex;
+            flex-direction: column;
+        }
+            form #cntGames {
+                justify-content: center;
+            }
+            form .buttons {
+                width: 50vw;
+                height: 10vh;
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+            }
+                form .buttons input {
+                    display: flex;
+                    background: #B4D1A2;
+                    border: 0.1vh solid #000;
+                    border-radius: 1vh;
+                    height: 5vh;
+                    font-size: 2.5vw;
+                    color: #593828;
+                    text-align: center;
+                }
+                    form .buttons input:hover {
+                        background: #5E8F64;
+                        color: #fff;
+                    }
+        #gameover {
+            display: flex;
+            width: 70vw;
+            height: 10vh;
+            background: #1C470E;
+            margin: auto;
+            color: #FFF8E5;
+            text-align: center;
+            font-size: 5vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="table">
+            <table>
+                <tr>
+                    <td class="textstats">номер игры :</td>
+                    <td id="numplay">0</td>
+                    <td class="textstats">номер хода :</td>
+                    <td id="nummove">0</td>
+                    <td class="textstats">макс.ходов :</td>
+                    <td id="maxmove">0</td>
+                    <td class="textstats">мин.ходов :</td>
+                    <td id="minmove">0</td>
+                    <td class="textstats">победы левого :</td>
+                    <td id="winleft">0</td>
+                    <td class="textstats">победы правого :</td>
+                    <td id="winright">0</td>
+
+                </tr>
+            </table>
+        </div>
+        <div class="column">
+            <div class="deck" id="leftdeck" title="Просмотреть колоду"></div>
+            <div class="playingcard" id="leftcard"></div>
+            <div class="playingcard" id="rightcard"></div>
+            <div class="deck" id="rightdeck" title="Просмотреть колоду"></div>
+        </div>
+        <div id="gameover"></div>
+        <form>
+            <div class="buttons">
+                <input type="button" id="move" value="Ход" title="либо нажмите пробел"/>
+                <input type="button" id="autofinish" value="Доиграть автоматически" />
+                <input type="button" id="clear" value="Обнулить" />
+                <input type="button" id="newgame" value="Новая игра" />
+            </div>
+            <div class="buttons" id="cntGames">
+                <input type="button" id="playNgames" value="Сыграть" />
+                <input type="number" id="Ngames" max="1000" min="1" value="1"/>
+            </div>
+        </form>
+    </div>
+    <script>
+        const cards = [
+        {name: "6(♠)",  value: 6},  {name: "6(♥)",  value: 6},  {name: "6(♦)",  value: 6},  {name: "6(♣)",  value: 6},
+        {name: "7(♠)",  value: 7},  {name: "7(♥)",  value: 7},  {name: "7(♦)",  value: 7},  {name: "7(♣)",  value: 7},
+        {name: "8(♠)",  value: 8},  {name: "8(♥)",  value: 8},  {name: "8(♦)",  value: 8},  {name: "8(♣)",  value: 8},
+        {name: "9(♠)",  value: 9},  {name: "9(♥)",  value: 9},  {name: "9(♦)",  value: 9},  {name: "9(♣)",  value: 9},
+        {name: "10(♠)", value: 10}, {name: "10(♥)", value: 10}, {name: "10(♦)", value: 10}, {name: "10(♣)", value: 10},
+        {name: "В(♠)",  value: 11}, {name: "В(♥)",  value: 11}, {name: "В(♦)",  value: 11}, {name: "В(♣)",  value: 11},
+        {name: "Д(♠)",  value: 12}, {name: "Д(♥)",  value: 12}, {name: "Д(♦)",  value: 12}, {name: "Д(♣)",  value: 12},
+        {name: "К(♠)",  value: 13}, {name: "К(♥)",  value: 13}, {name: "К(♦)",  value: 13}, {name: "К(♣)",  value: 13},
+        {name: "Т(♠)",  value: 14}, {name: "Т(♥)",  value: 14}, {name: "Т(♦)",  value: 14}, {name: "Т(♣)",  value: 14}];
+
+        let statistics = {
+            numPlay: 0,
+            numMove: 0,
+            maxMove: 0,
+            minMove: 0,
+            winLeft: 0,
+            winRight: 0,
+        };
+
+        let numPlay = document.getElementById('numplay');
+        let numMove = document.getElementById('nummove');
+        let maxMove = document.getElementById('maxmove');
+        let minMove = document.getElementById('minmove');
+        let winLeft = document.getElementById('winleft');
+        let winRight = document.getElementById('winright');
+
+        let newGame = document.getElementById('newgame');
+        let move = document.getElementById('move');
+        let leftDeck = document.getElementById('leftdeck');
+        let rightDeck = document.getElementById('rightdeck');
+        let leftCard = document.getElementById('leftcard');
+        let rightCard = document.getElementById('rightcard');
+        let clear = document.getElementById('clear');
+        let autoFinish = document.getElementById('autofinish');
+        let gameOver = document.getElementById('gameover');
+        let playNGames = document.getElementById('playNgames');
+        let NGames = document.getElementById('Ngames');
+        
+               
+        let deck1 = [];
+        let deck2 = [];
+        let playingCard1 = [];
+        let playingCard2 = [];
+        let isVisible = false;
+        let isLeftVisible = false;
+        let isRightVisible = false;
+        let needStopGame = false;
+
+        move.addEventListener("click", moveClick);
+        window.addEventListener("keydown", onKeydown);
+        newGame.addEventListener("click",NewGame);
+        leftDeck.addEventListener("click",seeLeftDeck);
+        rightDeck.addEventListener("click",seeRightDeck);
+        clear.addEventListener("click",clearStats);
+        autoFinish.addEventListener("click",finishGame);
+        playNGames.addEventListener("click", clickNGames);
+
+        NewGame();
+
+        function shuffle(card) {
+            for (let i = card.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * i);
+                [card[i], card[j]] = [card[j], card[i]];
+            }
+        }
+
+        function NewGame() {
+            statistics.numPlay += 1;
+            statistics.numMove = 0;
+            renewStats();
+
+            autoFinish.style.cssText = 'opacity: 1; z-index: 1';
+            move.style.cssText = 'opacity: 1; z-index: 1';
+
+            leftDeck.innerHTML = "";
+            rightDeck.innerHTML = "";
+            leftCard.innerHTML = "";
+            rightCard.innerHTML = "";
+            gameOver.innerHTML = "";
+            leftCard.style.cssText = 'background: #1C470E; border: none';
+            rightCard.style.cssText = 'background: #1C470E; border: none';
+        
+            deck1 = cards.slice();
+            shuffle(deck1);
+            deck2 = deck1.splice(18);
+
+            playingCard1 = [];
+            playingCard2 = [];
+            needStopGame = false;
+            isVisible = false;
+            isLeftVisible = false;
+            isRightVisible = false;
+        }
+
+        function comparison(value1, value2) {
+            if ((value1 == 6 && value2 == 14) || (value1 == 7 && value2 == 13)) {
+                return 1;
+            } else if ((value1 == 14 && value2 == 6) || (value1 == 13 && value2 == 7)) {
+                return -1;
+            } else {
+                return value1 - value2;
+            }
+        }
+
+        function onKeydown(e) {
+            if (e.key == " ") {
+                moveClick();
+            }  
+        }
+
+        function moveClick() {
+            if (!isVisible)
+            {
+               if (deck1.length == 0 || deck2.length == 0) {
+                 stopGame();
+               } else {
+                 leftCard.style.cssText =
+                   "color: #593828; background: #FFF8E5; border: 0.2vw solid #000000";
+                 rightCard.style.cssText = 
+                   "color: #593828; background: #FFF8E5; border: 0.2vw solid #000000";
+                 playingCard1.unshift(deck1.shift());
+                 playingCard2.unshift(deck2.shift());
+                 leftCard.innerHTML = playingCard1[0].name;
+                 rightCard.innerHTML = playingCard2[0].name;
+                 isVisible = true;
+               } 
+            } else {
+              let comparedCards = comparison(
+                  playingCard1[0].value,
+                  playingCard2[0].value
+              );
+
+              if (comparedCards == 0) {
+                  if (deck1.length == 0 || deck2.length == 0) {
+                    stopGame();
+                  } else {
+                    playingCard1.unshift(deck1.shift());
+                    playingCard2.unshift(deck2.shift());
+                    leftCard.innerHTML = playingCard1[0].name + '<br>' + leftCard.innerHTML;
+                    rightCard.innerHTML = 
+                       playingCard2[0].name + '<br>' + rightCard.innerHTML;
+                  }
+                    
+              } else {
+                if (comparedCards > 0) {
+                  deck1 = deck1.concat(playingCard1,playingCard2)
+                } else {
+                  deck2 = deck2.concat(playingCard2,playingCard1)
+                }
+                statistics.numMove += 1;
+
+                leftDeck.innerHTML = "";
+                rightDeck.innerHTML = "";
+                playingCard1 = [];
+                playingCard2 = [];
+                leftCard.style.cssText = 'background: #1C470E; border: none';
+                rightCard.style.cssText = 'background: #1C470E; border: none';
+                isVisible = false;   
+     
+                if (deck1.length == 0 || deck2.length == 0) {
+                  stopGame();
+                }
+              }
+            }
+            if (isLeftVisible) {
+                const namedLeftDeck = deck1.map(n => n.name);
+                leftDeck.innerHTML = namedLeftDeck.join(" ");
+            }
+            if (isRightVisible) {
+                const namedRightDeck = deck2.map(n => n.name);
+                rightDeck.innerHTML = namedRightDeck.join(" ");
+            }
+            renewStats();
+        }
+
+        function stopGame() {
+            gameOver.innerHTML = 
+                "Игра завершена. Победил " +
+                (deck1.length == 0 ? "правый" : "левый") + 
+                " игрок";
+            if (deck1.length == 0) {
+                statistics.winRight += 1; 
+            } else {
+                statistics.winLeft += 1; 
+            }
+                        
+            if (statistics.minMove > statistics.numMove || statistics.minMove == 0) {
+                statistics.minMove = statistics.numMove;
+            }
+            if (statistics.maxMove < statistics.numMove) {
+                statistics.maxMove = statistics.numMove;
+            }
+                        
+            needStopGame = true;
+            move.style.cssText = 'opacity: 0; z-index: -1';
+            autoFinish.style.cssText = 'opacity: 0; z-index: -1';
+        }
+
+        function seeLeftDeck() {           
+            isLeftVisible = !isLeftVisible;
+            if (isLeftVisible) {
+                const namedLeftDeck = deck1.map(n => n.name);
+                leftDeck.innerHTML = namedLeftDeck.join(" ");
+            } else {
+                leftDeck.innerHTML = "";
+            }
+        }
+
+        function seeRightDeck() {
+            isRightVisible = !isRightVisible;
+            if (isRightVisible) {
+                const namedRightDeck = deck2.map(n => n.name);
+                rightDeck.innerHTML = namedRightDeck.join(" ");
+            } else {
+                rightDeck.innerHTML = "";
+            }
+        }
+
+        function finishGame() {
+            do {
+                moveClick();
+            } while (!needStopGame);
+        }
+
+        function clickNGames() {
+            clearStats();
+            let cntIteration = NGames.value > 1000 ? 1000 : NGames.value;
+            for(let i = 0; i < cntIteration; i++) {
+                NewGame();
+                finishGame();
+            }
+            gameOver.innerHTML = 
+                "Игра завершена. Левый игрок победил " + 
+                statistics.winLeft + 
+                ", правый игрок победил " + 
+                statistics.winRight;         
+        }
+
+        function clearStats() {
+            statistics.numPlay = 0;
+            statistics.numMove = 0;
+            statistics.maxMove = 0;
+            statistics.minMove = 0;
+            statistics.winLeft = 0;
+            statistics.winRight = 0;
+
+            renewStats();
+        }
+
+        function renewStats() {
+            numPlay.innerHTML = statistics.numPlay;
+            numMove.innerHTML = statistics.numMove;
+            maxMove.innerHTML = statistics.maxMove;
+            minMove.innerHTML = statistics.minMove;
+            winLeft.innerHTML = statistics.winLeft;
+            winRight.innerHTML = statistics.winRight;
+        }
+    </script>
+</body>
+</html>
